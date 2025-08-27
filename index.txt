@@ -1,0 +1,28 @@
+const { create } = require('lodash');
+const { PrismaClient } = require('./generated/prisma')
+
+const prisma = new PrismaClient()
+
+async function main() {
+  // ... you will write your Prisma Client queries here
+   await prisma.author.deleteMany({
+    where: {
+        id: {
+            in: [2,3,4]
+        }
+    }
+  }) 
+  const allU = await prisma.author.findMany()
+  console.log(allU)
+}
+
+main()
+  .then(async () => {
+    await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  }) 
+
