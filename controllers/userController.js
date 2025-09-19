@@ -1,9 +1,9 @@
 
-const db = require("../lib/prisma")
+const db = require("../prismaClient")
 
 async function createUser(req, res) {
     const { name, email } = req.body;
-    const result = await db.prisma.user.create({
+    const result = await db.user.create({
         data: {
             "name": name,
             "email": email,
@@ -15,7 +15,7 @@ async function createUser(req, res) {
 }
 
 async function getUser(req, res) {
-    const result = await db.prisma.user.findMany()
+    const result = await db.user.findMany()
     res.send(result)
 };
 
@@ -25,7 +25,7 @@ async function updateUser(req, res) {
     console.log(id)
 
     const { myName, email } = req.body;
-    const result = await db.prisma.user.update({
+    const result = await db.user.update({
         where: {
             "id": id
         },
@@ -40,10 +40,11 @@ async function updateUser(req, res) {
 }
 
 async function deleteUser(req, res) {
-    const { id } = req.params
+    let { id } = req.params
     console.log(id)
+    id = parseInt(id)
 
-    const result = db.prisma.user.delete({
+    const result = db.user.delete({
         where: {
             id: id
           },
