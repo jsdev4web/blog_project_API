@@ -1,6 +1,5 @@
 
 const db = require("../prismaClient")
-const jwt = require("jsonwebtoken")
  
 
 async function createAuthor(req, res) {

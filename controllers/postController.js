@@ -5,36 +5,26 @@ const { post, connect } = require("../routes/authorRouter")
 const jwt = require("jsonwebtoken")
 
 
-async function loginPost(req, res){
-    let { id } = req.params
-    id = parseInt(id)
+async function loginPost(req, res) {
+    //I need to fix how to get a specific author later
+    const user = db.author.findFirst()
 
-    const user =  await db.author.findMany({
-            "where": {
-                "id": id
-            }
-        })
     console.log(user)
-    // send token in the header using CURL or Fetch
-    jwt.sign({user: user}, 'secretkey', (err, token) => {
+
+    //this is wheree the token is sent to the client 
+    jwt.sign({ user: user }, 'secretkey', (err, token) => {
         res.json({
             token: token
         })
-            console.log(token)
     });
-};
+}
 
 async function createPost(req, res) {
     jwt.verify(req.token, 'secretkey', (err, authData) => {
         if(err){
             res.sendStatus(403)
-            } else {
-            /* res.json({
-                message: 'Post',
-                authData
-            }) */
-            // prisma schema relations database create post existing user Google search
-                let { id } = req.params
+        } else {
+            let { id } = req.params
                 id = parseInt(id)
                 const { title, content, published } = req.body
                 const results = db.post.create({
@@ -52,10 +42,14 @@ async function createPost(req, res) {
 
             console.log(results)
             console.log(authData)
-            res.send(results) 
+            res.json({
+                message: 'Post created',
+                authData
+            }) 
         }
-    })
+    });
 }
+    
 
 async function getPost(req, res) {
 
@@ -151,5 +145,5 @@ module.exports = {
     getPost,
     updatePost,
     deletePost,
-    loginPost,
+    loginPost
 }
