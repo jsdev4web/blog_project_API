@@ -3,6 +3,7 @@ const { result, forEach } = require("lodash")
 const db = require("../prismaClient")
 const { post, connect } = require("../routes/authorRouter")
 const jwt = require("jsonwebtoken")
+const cookieParser = require('cookie-parser');
 
 
 async function loginPost(req, res) {
@@ -12,11 +13,19 @@ async function loginPost(req, res) {
     console.log(user)
 
     //this is wheree the token is sent to the client 
-    jwt.sign({ user: user }, 'secretkey', (err, token) => {
-        res.json({
-            token: token
-        })
-    });
+    // jwt.sign({ user: user }, 'secretkey', (err, token) => {
+    //     res.json({
+    //         token: token
+    //     })
+    // });
+    const payload = { id: user.id, email: user.email, name: user.name }
+    const token = jwt.sign(payload, 'secretkey')
+    res.cookie('token', token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: false
+    })
+    return res.status(200).json({message: 'Login successful', user: { user: user.name}})
 }
 
 async function createPost(req, res) {
@@ -24,9 +33,12 @@ async function createPost(req, res) {
         if(err){
             res.sendStatus(403)
         } else {
-            let { id } = req.params
-                id = parseInt(id)
-                const { title, content, published } = req.body
+            //let { id } = req.params
+                //id = parseInt(id)
+                let { id } = req.author.id
+
+                const { title, content, published} = req.body
+                
                 const results = db.post.create({
                     "data": {
                     "title": title,

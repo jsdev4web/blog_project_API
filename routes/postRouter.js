@@ -1,15 +1,37 @@
 const { Router } = require("express");
 const postController = require("../controllers/postController");
-const { verify } = require("jsonwebtoken");
+const jwt = require('jsonwebtoken'); // Assuming you're using jsonwebtoken library
+
 
 const postRouter = Router();
 
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if(token = null) {
+        return res.sendStatus(401);
+    }
+
+    jwt.verify(token, 'secretkey', (err, user) => {
+        if (err){
+            return res.sendStatus(403);
+        }
+        req.user = user;
+        next()
+    })
+}
+
 
 postRouter.post("/login", postController.loginPost)
-postRouter.post("/:id", verifyToken, postController.createPost);
+//postRouter.post("/:id", verifyToken, postController.createPost);
+postRouter.post("/", authenticateToken, postController.createPost);
 postRouter.get("/:id", postController.getPost);
 postRouter.put("/:id/:postId", postController.updatePost)
 postRouter.delete("/:id/:postId", postController.deletePost);
+
+
 
 
 //Format of Token = Authorization: Bearer <access_token>
@@ -30,7 +52,6 @@ function verifyToken(req, res, next) {
         //Forbidden
         res.sendStatus(403);
     }
-
 }
 
 module.exports = postRouter;
