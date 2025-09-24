@@ -6,18 +6,25 @@ const jwt = require('jsonwebtoken'); // Assuming you're using jsonwebtoken libra
 const postRouter = Router();
 
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
+    //const authHeader = req.header['authorization'];
+    const token = req.headers.authorization;
+    //console.log(req.headers.authorization)
+    //console.log(authHeader)
+    
 
-    const token = authHeader && authHeader.split(' ')[1];
+    //const token = authHeader && authHeader.split(' ')[1];
     //const token = authHeader.split(' ')[1];
 
-    console.log(token)
+    //console.log(token)
 
     if(token === null) {
         return res.sendStatus(401);
     }
 
+    //Try to troubleshoot authorizaion of client
+    
     jwt.verify(token, 'secretkey', (err, user) => {
+        //console.log(token)
         if (err){
             return res.sendStatus(403);
         }
