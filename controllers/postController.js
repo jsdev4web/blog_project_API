@@ -10,8 +10,7 @@ async function loginPost(req, res) {
     //I need to fix how to get a specific author later
     const user = await db.author.findMany();
 
-
-    console.log(user)
+    //console.log(user)
     //this is wheree the token is sent to the client 
     // jwt.sign({ user: user }, 'secretkey', (err, token) => {
     //     res.json({
@@ -20,7 +19,7 @@ async function loginPost(req, res) {
     // });
     const payload = { id: user.id, email: user.email, name: user.name }
     const token = jwt.sign(payload, 'secretkey')
-    console.log(token)
+    //console.log(token)
     res.cookie('token', token, {
         httpOnly: true,
         sameSite: 'lax',
@@ -30,19 +29,27 @@ async function loginPost(req, res) {
     res.json({
         token: token
     })
-    //return res.status(200).json({message: 'Login successful', user: { user: user.name}})
 }
 
 async function createPost(req, res) {
-    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    
+  /*   jwt.verify(req.token, 'secretkey', (err, authData) => {
+        
         if(err){
             res.sendStatus(403)
-        } else {
+        } else { */
             //let { id } = req.params
                 //id = parseInt(id)
-                let { id } = req.author.id
+                //let { id } = req.author.id
+
+                const user = await db.author.findMany();
+                console.log(user[0].id)
+                let id = user[0].id
+
 
                 const { title, content, published } = req.body
+                //The data above is not being grabed anymore
+                console.log(title)
                 
                 const results = db.post.create({
                     "data": {
@@ -58,13 +65,13 @@ async function createPost(req, res) {
                 })
 
             console.log(results)
-            console.log(authData)
+            //console.log(authData)
             res.json({
                 message: 'Post created',
-                authData
+                result: results
             }) 
-        }
-    });
+        //} 
+    //});
 }
     
 

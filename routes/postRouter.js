@@ -6,14 +6,8 @@ const jwt = require('jsonwebtoken'); // Assuming you're using jsonwebtoken libra
 const postRouter = Router();
 
 const authenticateToken = (req, res, next) => {
-    //const authHeader = req.header['authorization'];
+   
     const token = req.headers.authorization;
-    //console.log(req.headers.authorization)
-    //console.log(authHeader)
-    
-
-    //const token = authHeader && authHeader.split(' ')[1];
-    //const token = authHeader.split(' ')[1];
 
     //console.log(token)
 
