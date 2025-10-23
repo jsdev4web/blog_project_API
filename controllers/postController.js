@@ -33,78 +33,91 @@ async function loginPost(req, res) {
 
 async function createPost(req, res) {
     
-  /*   jwt.verify(req.token, 'secretkey', (err, authData) => {
-        
-        if(err){
-            res.sendStatus(403)
-        } else { */
-            //let { id } = req.params
-                //id = parseInt(id)
-                //let { id } = req.author.id
 
-                const user = await db.author.findMany();
-                console.log(user[0].id)
-                let id = user[0].id
+    //I only have one other and need to fix this later
+    //How do i cycle between authors and post
+    const user = await db.author.findMany();
+    console.log(user[0].id) //works
+    let id = user[0].id
 
 
-                const { title, content, published } = req.body
-                //The data above is not being grabed anymore
-                console.log(title)
-                
-                const results = db.post.create({
-                    "data": {
-                    "title": title,
-                    "content": content,
-                    "published": published,
-                    "author": {
-                        "connect": {
-                            "id": id,
-                            }
-                        }
-                    }
-                })
+    const { title, content, published } = req.body
+    console.log(title)
+    console.log(content)
+    console.log(published)
+    
+    const results = await db.post.create({
+        "data": {
+        "title": title,
+        "content": content,
+        "published": published,
+        "author": {
+            "connect": {
+                "id": id,
+                }
+            }
+        }
+    })
 
-            console.log(results)
-            //console.log(authData)
-            res.json({
-                message: 'Post created',
-                result: results
-            }) 
-        //} 
-    //});
+    console.log(results)
+    //console.log(authData)
+    res.json({
+        message: 'Post created',
+        result: results
+    }) 
+}
+
+async function getSinglePost(req, res) {
+    
+    
+    let postId = req.params.id
+    postId = parseInt(postId)
+    console.log(postId)
+
+    //I am not Dynamically grabbing the author id for below query
+    const user = await db.author.findMany();
+    console.log(user)
+    console.log(user[0].id) //works
+    let authorId = user[0].id
+
+    const singlePost = await db.post.findMany({
+        "where": {
+            "id": postId,
+            "authorId": authorId
+
+        }
+    })
+
+    res.json(singlePost)
 }
     
 
-async function getPost(req, res) {
+async function getAllPost(req, res) {
+    // REMEBER to use AWAIT to get the async promise on db queries
+    const authorPost = await db.post.findMany()
+    console.log(authorPost)
 
+    //I need to send this data to the client with buttons for 
+    //Update button and Delete Button & send to linked place
+    //Use the create Post as a mock how to grab id as it comes
+
+    res.json(authorPost)
     
-    let { id } = req.params
-    id = parseInt(id)
-    let authPost;
-    const results = await db.author.findUnique({
-        "where": { "id": id },
-        "include": {
-            "post": true,
-        },
-    })
-    console.log(results)
-    results.post.forEach((content) => {
-        authPost = content.content
-        console.log(content.content)
-    })
-
-    console.log(results.name)
-    res.send(`${authPost} written by ${results.name}`)
-};
+}
 
 async function updatePost(req, res) {
+    
+    //I am not Dynamically grabbing the author id for below query
+    const user = await db.author.findMany();
+    console.log(user[0].id) //works
+    let id = user[0].id
 
-    let { id, postId } = req.params;
 
-    id = parseInt(id);
+    let { postId } = req.params;
+
     postId = parseInt(postId);
 
-    const { title, content } = req.body;
+    const { title, content, published } = req.body;
 
     try {
     const results = await db.author.update({
@@ -120,6 +133,7 @@ async function updatePost(req, res) {
                     "data": {
                         "title": title,
                         "content": content,
+                        "published": published
                         },
                     },
                 },
@@ -137,9 +151,12 @@ async function updatePost(req, res) {
 }
 
 async function deletePost(req, res) {
-    let { id, postId } = req.params;
+    let { postId } = req.params;
 
-    id = parseInt(id)
+     const user = await db.author.findMany();
+    console.log(user[0].id) //works
+    let id = user[0].id
+
     postId = parseInt(postId)
 
     const results = await db.author.update({
@@ -166,7 +183,8 @@ async function deletePost(req, res) {
 
 module.exports = {
     createPost,
-    getPost,
+    getSinglePost,
+    getAllPost,
     updatePost,
     deletePost,
     loginPost

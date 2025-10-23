@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("node:path");
 
 const authorRouter = require("./routes/authorRouter");
 const postRouter = require("./routes/postRouter");
@@ -12,7 +11,7 @@ const cookieParser = require('cookie-parser')
 
 app.use(express.json()); //parse json data
 app.use(express.urlencoded({ extended: true })); //process data submit by forms
-app.use(cookieParser())
+app.use(cookieParser()) //make cookies avail. as obj in a req
 
 const corsOptions = {
       origin: '*', //allow all

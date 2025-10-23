@@ -29,11 +29,11 @@ const authenticateToken = (req, res, next) => {
 
 
 postRouter.post("/login", postController.loginPost)
-//postRouter.post("/:id", verifyToken, postController.createPost);
 postRouter.post("/", authenticateToken, postController.createPost);
-postRouter.get("/:id", postController.getPost);
-postRouter.put("/:id/:postId", postController.updatePost)
-postRouter.delete("/:id/:postId", postController.deletePost);
+postRouter.get("/", postController.getAllPost)
+postRouter.get("/:id", postController.getSinglePost);
+postRouter.put("/update/:postId", authenticateToken, postController.updatePost)
+postRouter.delete("/delete/:postId", postController.deletePost);
 
 
 
