@@ -3,6 +3,8 @@ const db = require("../prismaClient")
 
 async function createUser(req, res) {
     const { name, email } = req.body;
+    console.log(name)
+    console.log(email)
     const result = await db.user.create({
         data: {
             "name": name,
@@ -16,6 +18,16 @@ async function createUser(req, res) {
 
 async function getUser(req, res) {
     const result = await db.user.findMany()
+    res.send(result)
+};
+
+async function getByUser(req, res) {
+    let { name } = req.body
+    const result = await db.user.findMany({
+        where: {
+            "name": name   
+        }
+    })
     res.send(result)
 };
 
@@ -56,6 +68,7 @@ async function deleteUser(req, res) {
 module.exports = {
     createUser,
     getUser,
+    getByUser,
     updateUser,
     deleteUser,
 }

@@ -3,7 +3,7 @@ const commentController = require("../controllers/commentController")
 
 const commentRouter = Router();
 
-commentRouter.post("/:userid/user/:postid/comment", commentController.createComment); //comment/:commentId
+commentRouter.post("/:userid/user/:postid/post", commentController.createComment); 
 commentRouter.get("/:id", commentController.getComment);
 commentRouter.get("/", commentController.getAllComment)
 commentRouter.get("/post/:postid", commentController.getPostIdComment)

@@ -2,18 +2,21 @@ const db = require("../prismaClient")
 const { connect } = require("../routes/authorRouter")
 
 async function createComment(req, res) {
-
+    console.log("test")
     //post id number
     let { userid } = req.params
     userid = parseInt(userid)
 
-    console.log(userid, "userid is suppose to be for Tom ")
+    console.log(userid, "userid is suppose to be for Tony ")
     //user id number here
     let { postid } = req.params
     postid = parseInt(postid)
     console.log(postid, "post id of 2")
 
-    const { comment } = req.body
+    const { user, comment } = req.body
+    
+    console.log(user)
+    console.log(comment)
 
     const results = await db.comment.create({
         data: {
